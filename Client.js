@@ -31,6 +31,10 @@
  */
 Ext.namespace('Ext.ux.util');
 
+/**
+ * Required below - there is probably a much better way of 
+ * doing this. Removes the specified item from the list.
+ */
 Array.prototype.remove = function(item) {
   var tempArray = [];
   while (this[this.length-1] !== item && this.length > 0) {
@@ -193,7 +197,7 @@ Ext.define('Ext.ux.util.RpcClient', {
             var components = {}, self = this;
             
             Ext.each(methods, function(method) {
-                console.log('Got method: ' + method);
+                //console.log('Got method: ' + method);
                 var parts = method.split('.');
                 var component = components[parts[0]] || {};
                 
@@ -206,7 +210,7 @@ Ext.define('Ext.ux.util.RpcClient', {
             });
             
             for (var name in components) {
-                console.log('Component name: ' + name)
+                //console.log('Component name: ' + name)
                 self[name] = components[name];
             }
             

@@ -1,23 +1,23 @@
-//We've added a third and final item to our tab panel - scroll down to see it
+/**
+ * Main Application
+ */
 Ext.application({
     name: 'DelugeApp',
-    requires: ['DelugeApp.view.Main', 'DelugeApp.view.Login'],
+    requires: ['DelugeApp.view.Main', 'DelugeApp.view.Login', 'DelugeApp.Config'],
 
     launch: function() {
         console.log('App launch');
-        var mainView = {
-            xtype: 'mainview'
-        };
+        config = new DelugeApp.Config();
         
-        var loginView = {
-            xtype: 'login'
-        };
+        loginView = new DelugeApp.view.Login();
+		//mainView = new DelugeApp.view.Main();
+		
+		// state = 0;// 0 logged out, 1 logged in
         
         client = new Ext.ux.util.RpcClient({
-            url: 'http://localhost:8112/json'
+            url: config.hostname + config.json_path
         });
         
-        //Ext.Viewport.add([mainView]);
-        Ext.Viewport.add([loginView]);
+        Ext.Viewport.add(loginView);
     }
 });

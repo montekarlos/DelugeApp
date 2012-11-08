@@ -12,14 +12,12 @@ Ext.define('DelugeApp.Auth', {
 		client.auth.login(password, {
 			success: function(result) {
 				if (result) {
-					console.log('setting state = 1!!!');
-					state = 1;
 
-
+                    mainView = new DelugeApp.view.Main();
                     
 					// Do we really have to do this? So ugly :-(
 					Ext.Viewport.remove(loginView, false);
-					Ext.Viewport.add(new DelugeApp.view.Main());
+					Ext.Viewport.add(mainView);
 					/*
 					client.core.get_status_keys({
 						success: function(result) {

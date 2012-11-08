@@ -14,7 +14,9 @@ Ext.define('DelugeApp.Auth', {
 				if (result) {
 					console.log('setting state = 1!!!');
 					state = 1;
-					
+
+
+                    
 					// Do we really have to do this? So ugly :-(
 					Ext.Viewport.remove(loginView, false);
 					Ext.Viewport.add(new DelugeApp.view.Main());

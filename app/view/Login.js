@@ -2,40 +2,45 @@ Ext.define('DelugeApp.view.Login', {
     extend: 'Ext.Panel',
     requires: ['Ext.Panel', 'Ext.form.FieldSet', 'Ext.field.Text', 'DelugeApp.Auth', 'DelugeApp.Config'],
     alias: 'widget.login',
-    
+   
     config: {
-        fullscreen: true,
-        items: [
-            {
-                xtype: 'fieldset',
-                title: 'Enter password',
-                items: [
-					{
-						xtype: 'textfield',
-						label: 'Hostname',
-						name: 'hostname',
-						value: 'config.hostname'
-					},
-                    {
-                        xtype: 'passwordfield',
-                        label: 'Password',
-						name:  'password',
-                        listeners: {
-                            keyup: function(fld, e) {
-                                if (e.browserEvent.keyCode == 13) {
-                                    e.stopEvent();
-                                    console.log('Pressed enter in password field - Value is: ' + fld.getValue());
-                                    
-                                    var auth = new DelugeApp.Auth();
-									auth.loginToWebServer(fld.getValue());
-                                }
-                            }
-                        }
-                    }
-                ]
-            }
-        ]
+        fullscreen: true
+    },
     
-    }
+    initialize: function(arguments) {
+        this.callParent(arguments);
+        
+        var hostNameField = {
+            xtype: 'textfield',
+            label: 'Hostname',
+            name: 'hostname'
+        };
 
+        self = this;
+        
+        var passwordField = {
+            xtype: 'passwordfield',
+            label: 'Password',
+            name: 'password',
+            listeners: this.passwordFieldListeners,
+            scope: this
+        };
+        
+        var fieldset = {
+            xtype: 'fieldset',
+            title: 'Enter password',
+            items: [ hostNameField, passwordField ]
+        };
+        
+        this.add([fieldset]);
+    },
+        
+    passwordFieldListeners: {
+        keyup: function(fld, e) {
+            if (e.browserEvent.keyCode == 13) {
+                e.stopEvent();
+                self.fireEvent("loginCommand", fld.getValue(), self);
+            }
+        }
+    }
 });

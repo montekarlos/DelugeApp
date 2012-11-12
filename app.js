@@ -1,23 +1,32 @@
 /**
  * Main Application
  */
+// Setup program structure
+deluge = new Object();
+deluge.ui = new Object();
+ 
 Ext.application({
     name: 'DelugeApp',
-    requires: ['DelugeApp.view.Main', 'DelugeApp.view.Login', 'DelugeApp.Config'],
+    requires: [],
+    
+    // Application dependencies
+    views: ['Main', 'TorrentList', 'Login', 'TorrentDetail'],
+    model: ['TorrentModel'],
+    store: ['TorrentStore'],
+    controllers: ['LoginController', 'TorrentListController', 'TorrentDetailController'],
+   
 
     launch: function() {
         console.log('App launch');
-        config = new DelugeApp.Config();
-        
-        loginView = new DelugeApp.view.Login();
-		//mainView = new DelugeApp.view.Main();
-		
-		// state = 0;// 0 logged out, 1 logged in
-        
-        client = new Ext.ux.util.RpcClient({
-            url: config.hostname + config.json_path
+
+        deluge.config = new DelugeApp.Config();
+                        
+        deluge.client  = new Ext.ux.util.RpcClient({
+            url: deluge.config.hostname + deluge.config.json_path
         });
         
-        Ext.Viewport.add(loginView);
+        var loginView = { xtype: 'login' };
+        
+        Ext.Viewport.add([loginView]);
     }
 });

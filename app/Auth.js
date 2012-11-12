@@ -9,15 +9,15 @@ Ext.define('DelugeApp.Auth', {
 
 		//console.log('New client path: ' + config.hostname + config.json_path);
 		
-		client.auth.login(password, {
+		deluge.client.auth.login(password, {
 			success: function(result) {
 				if (result) {
 
-                    mainView = new DelugeApp.view.Main();
+                    deluge.ui.mainView = new DelugeApp.view.Main();
                     
 					// Do we really have to do this? So ugly :-(
-					Ext.Viewport.remove(loginView, false);
-					Ext.Viewport.add(mainView);
+					Ext.Viewport.remove(deluge.ui.loginView, false);
+					Ext.Viewport.add(deluge.ui.mainView);
 					/*
 					client.core.get_status_keys({
 						success: function(result) {
@@ -44,7 +44,7 @@ Ext.define('DelugeApp.Auth', {
 						}
 					});
 			*/	
-					client.core.get_torrents_status({
+					deluge.client.core.get_torrents_status({
 						success: function(result) {
 							console.log(result);
 							/*if (result) {

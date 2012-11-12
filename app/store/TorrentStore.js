@@ -5,7 +5,7 @@ Ext.define('DelugeApp.store.TorrentStore', {
     
     config: {
         model: 'DelugeApp.model.TorrentModel',
-        data: data,
+        data: [],
         autoSync: true
     }
 });

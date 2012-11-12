@@ -1,95 +1,60 @@
-
-
-data = [ Ext.create('DelugeApp.model.TorrentModel', {
-                                               name: 'Tony', 
-                                               age: 3 }) ];
-data1 = [];
-
-torrentStore = Ext.create('DelugeApp.store.TorrentStore');
+deluge.torrentStore = Ext.create('DelugeApp.store.TorrentStore');
 
 Ext.define("DelugeApp.view.Main", {
     extend: 'Ext.tab.Panel',
-    requires: ['Ext.dataview.NestedList', 'Ext.TitleBar', 'Ext.data.proxy.JsonP', 'Ext.Panel', 
-               'DelugeApp.model.TorrentModel', 'DelugeApp.store.TorrentStore', 'DelugeApp.view.TorrentDetail'],
+    requires: ['Ext.dataview.NestedList', 'Ext.TitleBar', 'Ext.data.proxy.JsonP', 'Ext.Panel'],
     alias: "widget.mainview",
-   
+      
     config: {
         fullscreen: true,
-        tabBarPosition: 'bottom',
-        
-        items: [
-            {
-                xtype: 'list',
-                iconCls: 'star',
-                title: 'Torrents',
-                itemTpl: '<div>{name}</div><div>{label}</div>',
-                scrollable: true,
-                
-                store: torrentStore,
-                   
-                detailCard: {
-                    xtype: 'panel',
-                    scrollable: true,
-                    styleHtmlContent: true
-                },
-                
-                listeners: {
-                    itemtap: function(list, index, target, record, e, eOpts) {
-                        //this.getDetailCard().setHtml(record.get('content'));
-                        //this.getStore().removeAll();
-                        //console.log("itemtap");
-                        Ext.Viewport.remove(mainView, false);
-                        detailView = new Ext.create('DelugeApp.view.TorrentDetail', { 
-                            torrentDetail: record 
-                        });
-                        Ext.Viewport.add(detailView);
-                    },
-                    
-                    leafitemtap: function(nestedList, list, index, target, record, e, eOpts) {
-                        console.log("leafitemtap");
-                    },
-                    
-                    load: function(nestedList, store, records, successful, operation, eOpts) {
-                        console.log("load");
-                    },
-                    
-                    containertap: function(nestedList, list, e, eOpts) {
-                        console.log("containertap");
-                    },
-                    
-                    selectionchange: function(nestedList, list, selections, eOpts) {
-                        console.log("selectionchange");
-                    }
-                }
-            }
-        ]
+        tabBarPosition: 'bottom'
+    },
+    
+    onTorrentsListDisclose: function (list, record, target, index, evt, options) {
+        this.fireEvent("selectTorrent", this, record);
+        console.log("Fire event list disclose: " + record);
     },
 
-	initialize: function(){
-        client.web.update_ui('', '', {
+    initialize: function(){
+        this.callParent(arguments);
+                
+        var addButton = {
+            xtype: 'button',
+            text: 'New',
+            ui: 'action',
+            handler: this.onAddButtonTap,
+            scope: this
+        };
+        
+        var topToolbar = {
+            xtype: 'toolbar',
+            title: 'Torrents',
+            docked: 'top',
+            items: [ { xtype: 'spacer' }, addButton ]
+        };
+        
+        
+        var torrentList = {
+            xtype: 'torrentlist',
+            
+            store: deluge.torrentStore,
+                        
+            listeners: {
+                disclose: { fn: this.onTorrentsListDisclose, scope: this }
+            }
+        };
+        
+        this.add([topToolbar, torrentList]);
+    
+        deluge.client.web.update_ui('', '', {
             success: function(result) {
                 //console.log(result);
                 //console.log(result.torrents);
                 Ext.iterate(result.torrents, function(torrentId, torrentInfo) {
-                    torrentStore.add(torrentInfo);
+                    deluge.torrentStore.add(torrentInfo);
+                    //console.log(torrentInfo);
                 });
             }
         });
-        /*(client.core.get_session_state({
-            success: function(result) {
-                //torrentStore.removeAll();
-                Ext.each(result, function(torrentId) {
-                    console.log("Torrent id is: " + torrentId);
-                    client.core.get_torrents_status(torrentId, '', {
-                        success: function(result) {
-                            //console.log("Status: " + result.toString());
-                            console.log("Name: " + result.name + " | " + result.total_done);
-                            torrentStore.add( result );
-                        }
-                    });
-                });
-                torrentStore.sync();
-            }
-        });*/
 	}
 });
